@@ -293,7 +293,7 @@ int buyCard(int supplyPos, struct gameState *state) {
     return -1;
   } else {
     state->phase=1;
-    //state->supplyCount[supplyPos]--;
+    state->supplyCount[supplyPos]--;
     gainCard(supplyPos, state, 0, who); //card goes in discard, this might be wrong.. (2 means goes into hand, 0 goes into discard)
   
     state->coins = (state->coins) - (getCost(supplyPos));
@@ -401,10 +401,9 @@ int isGameOver(struct gameState *state) {
   j = 0;
   for (i = 0; i < 25; i++)
     {
-      if (state->supplyCount[i] == 0)
-	{
+      if (state->supplyCount[i] == 0) {
 	  j++;
-	}
+		}
     }
   if ( j >= 3)
     {
@@ -1081,11 +1080,13 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
 		case sea_hag:
 		  for (i = 0; i < state->numPlayers; i++){
 		if (i != currentPlayer){
-		  state->discard[i][state->discardCount[i]] = state->deck[i][state->deckCount[i]--];			    state->deckCount[i]--;
+		  state->discard[i][state->discardCount[i]] = state->deck[i][state->deckCount[i]--];			    
+		  state->deckCount[i]--;
 		  state->discardCount[i]++;
-		  state->deck[i][state->deckCount[i]--] = curse;//Top card now a curse
+		  state->deck[i][state->deckCount[i]--] = curse; //Top card now a curse
 		}
 		  }
+		  // BUG ALERT: No discard is called!
 		  return 0;
 			
 		case treasure_map:
@@ -1235,8 +1236,7 @@ int playAdventurer(struct gameState *state) {
   int cardDrawn;
   int temphand[MAX_HAND];
 
-  // BUG ALERT in line below. Should be drawntreasure < 2
-  while(drawntreasure <= 2){
+  while(drawntreasure < 2){
 	if (state->deckCount[currentPlayer] <1)//if the deck is empty we need to shuffle discard and add to deck
 	  shuffle(currentPlayer, state);
 	
@@ -1251,10 +1251,10 @@ int playAdventurer(struct gameState *state) {
 	  tempCounter++;
 	}
   }
-  // BUG ALERT in line below - add treasures in hand to player's buy total, thus giving him twice what he should have.
   	updateCoins(currentPlayer, state, 0);
       while(tempCounter-1>=0){
 	state->discard[currentPlayer][state->discardCount[currentPlayer]++]=temphand[tempCounter-1]; // discard all cards in play that have been drawn
+	//state->discardCount[currentPlayer]++;
 	tempCounter=tempCounter-1;
       }
       return 0;
@@ -1269,8 +1269,7 @@ int playSmithy(struct gameState *state, int handPos) {
 	
 		
   //discard card from hand
-  // BUG ALERT - discard wrong card (not Smithy), causing either a seg fault (if handPos == 0) or simply wrong discard
-  discardCard(handPos-1, currentPlayer, state, 0);
+  discardCard(handPos, currentPlayer, state, 0);
   return 0;
 }
 
@@ -1291,59 +1290,23 @@ int playVillage(struct gameState *state, int handPos) {
 int playFeast(struct gameState *state, const int choice1) {
   int x, i;
   int currentPlayer = whoseTurn(state);
-  int temphand[MAX_HAND];
 
-      //gain card with cost up to 5
-      //Backup hand
-      for (i = 0; i <= state->handCount[currentPlayer]; i++){
-	temphand[i] = state->hand[currentPlayer][i];//Backup card
-	state->hand[currentPlayer][i] = -1;//Set to nothing
-      }
-      //Backup hand
-
-      //Update Coins for Buy
-      updateCoins(currentPlayer, state, 5);
-      x = 1;//Condition to loop on
-      while( x == 1) {//Buy one card
 	if (supplyCount(choice1, state) <= 0){
-	  if (DEBUG)
 	    printf("None of that card left, sorry!\n");
-
-	  if (DEBUG){
-	    printf("Cards Left: %d\n", supplyCount(choice1, state));
-	  }
+		return -1;
 	}
 	else if (state->coins < getCost(choice1)){
 	  printf("That card is too expensive!\n");
-
-	  if (DEBUG){
-	    printf("Coins: %d < %d\n", state->coins, getCost(choice1));
-	  }
+	  printf("It costs %d \n", getCost(choice1));
+	  return -1;
 	}
-	else{
-
-	  if (DEBUG){
-	    printf("Deck Count: %d\n", state->handCount[currentPlayer] + state->deckCount[currentPlayer] + state->discardCount[currentPlayer]);
-	  }
-
+	else {
+		// Trash card in hand, decrease handcount, and dont add to discard
+		state->hand[currentPlayer][state->handCount[currentPlayer]-1] = -1;
+		state->handCount[currentPlayer]--;
+      //gain card with cost up to 5
 	  gainCard(choice1, state, 0, currentPlayer);//Gain the card
-	  // BUG ALERT: Comment out line which causes while-loop to terminate, causing infinte loop
-	  //x = 0;//No more buying cards
-
-	  if (DEBUG){
-	    printf("Deck Count: %d\n", state->handCount[currentPlayer] + state->deckCount[currentPlayer] + state->discardCount[currentPlayer]);
-	  }
-
 	}
-      }     
-
-      //Reset Hand
-      for (i = 0; i <= state->handCount[currentPlayer]; i++){
-	state->hand[currentPlayer][i] = temphand[i];
-	temphand[i] = -1;
-      }
-      //Reset Hand
-      			
   return 0;
 }
 
