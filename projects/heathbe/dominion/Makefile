@@ -87,15 +87,15 @@ unittestresults.out: $(tests) dominion.o interface.o rngs.o
 	cat cardtest4.c.gcov >> unittestresults.out
 
 randomtestresults.out: $(randomtests) dominion.o interface.o rngs.o
-	./randomtestcard1 &> unittestresults.out
-	gcov -b randomtestcard1.c >> unittestresults.out
-	cat randomtestcard1.c.gcov >> unittestresults.out
-	./randomtestcard2 >> unittestresults.out
-	gcov -b randomtestcard2.c >> unittestresults.out
-	cat randomtestcard2.c.gcov >> unittestresults.out
-	./randomtestadventurer >> unittestresults.out
-	gcov -b randomtestadventurer.c >> unittestresults.out
-	cat randomtestadventurer.c.gcov >> unittestresults.out
+	./randomtestcard1 &> randomtestresults.out
+	gcov -b randomtestcard1.c >> randomtestresults.out
+	cat randomtestcard1.c.gcov >> randomtestresults.out
+	./randomtestcard2 >> randomtestresults.out
+	gcov -b randomtestcard2.c >> randomtestresults.out
+	cat randomtestcard2.c.gcov >> randomtestresults.out
+	./randomtestadventurer >> randomtestresults.out
+	gcov -b randomtestadventurer.c >> randomtestresults.out
+	cat randomtestadventurer.c.gcov >> randomtestresults.out
 
 
 player: player.c interface.o
