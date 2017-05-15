@@ -11,6 +11,8 @@ Sam Heinith CS362
 #include "rngs.h"
 #include "interface.h"
 #include "dominion.h"
+#include <time.h>
+#include <stdlib.h>
 
 
 void cardNumToName(int card, char *name){
@@ -289,13 +291,18 @@ int addCardToHand(int player, int card, struct gameState *game) {
 
 void selectKingdomCards(int randomSeed, int kingCards[NUM_K_CARDS]) {
    int i, used, card, numSelected = 0;
+   /*
    SelectStream(1);
 	PutSeed((long)randomSeed);
+	*/
+	struct timespec myclock;
+	clock_gettime(CLOCK_REALTIME, &myclock);
+	srand(myclock.tv_nsec);
  
 	
   while(numSelected < NUM_K_CARDS) {
     used = FALSE;
-    card = floor(Random() * NUM_TOTAL_K_CARDS);
+    card = rand() % NUM_TOTAL_K_CARDS;
     if(card < adventurer) continue;
     for(i = 0; i < numSelected; i++) {
       if(kingCards[i] == card) {

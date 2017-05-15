@@ -5,6 +5,7 @@
 #include <math.h>
 #include <stdlib.h>
 
+
 int compare(const void* a, const void* b) {
   if (*(int*)a > *(int*)b)
     return 1;
@@ -41,8 +42,10 @@ int initializeGame(int numPlayers, int kingdomCards[10], int randomSeed,
   int j;
   int it;			
   //set up random number generator
+  
   SelectStream(1);
   PutSeed((long)randomSeed);
+  
   
   //check number of players
   if (numPlayers > MAX_PLAYERS || numPlayers < 2)
@@ -1235,10 +1238,15 @@ int playAdventurer(struct gameState *state) {
   int currentPlayer = whoseTurn(state);
   int cardDrawn;
   int temphand[MAX_HAND];
+  int timesShuffled=0;
 
+  // Bug, should be 2
   while(drawntreasure < 2){
-	if (state->deckCount[currentPlayer] <1)//if the deck is empty we need to shuffle discard and add to deck
+	if (state->deckCount[currentPlayer] <1) {//if the deck is empty we need to shuffle discard and add to deck
 	  shuffle(currentPlayer, state);
+	  timesShuffled++;
+	}
+
 	
 	drawCard(currentPlayer, state);
 
@@ -1250,6 +1258,9 @@ int playAdventurer(struct gameState *state) {
 	  state->handCount[currentPlayer]--; //this should just remove the top card (the most recently drawn one).
 	  tempCounter++;
 	}
+	// Stop card from running in infinite loop
+	if (timesShuffled > 2)
+		return -1;
   }
   	updateCoins(currentPlayer, state, 0);
       while(tempCounter-1>=0){
