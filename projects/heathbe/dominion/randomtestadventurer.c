@@ -9,10 +9,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define NUM_TESTS 100000
+#define NUM_TESTS 1000000
 // Edit this value for each card test
 #define TARGET_CARD adventurer
-
 
 
 void bugReport(char* errorMsg, int numPlayers, int cardsInHand, int cardsInDiscard, int cardsInDeck, int kingdomCards[10]) {
@@ -39,6 +38,10 @@ int main() {
 	int failures=0;
 	int i, a;
 	int times, discard, hand, player, cards;
+	int segFaults = 0, infiniteLoops = 0;
+	char segFaultMsg[] = "Error, SEG FAULT";
+	char infLoop[] = "Infinte Loop Error";
+
 
 	struct gameState* testGame  = newGame();
 
@@ -47,10 +50,10 @@ int main() {
 		clock_gettime(CLOCK_REALTIME, &myclock);
 		srand(myclock.tv_nsec);
 	  memset(kingdomCards, 0, sizeof(kingdomCards));
-	  selectKingdomCards( 1+(rand()%256), kingdomCards);
-	  initializeGame(numPlayers, kingdomCards, 1+(rand()%123456789), testGame);
+	  selectKingdomCards( rand()%256, kingdomCards);
 		// randomize players
-		numPlayers = 1+ (rand() % MAX_PLAYERS+1);
+		numPlayers = 1 + abs((rand() % (MAX_PLAYERS+1) ));
+
 		memset(testGame, 0, sizeof(struct gameState));
 		testGame->numPlayers = numPlayers;
 
@@ -65,8 +68,8 @@ int main() {
 
 		
 		// Random number of cards between 0 and 30
-		int deckCount = 1+ (rand() % 200);
-		int discardCount = 1+ (rand() %200);
+		int deckCount = (rand() % 200);
+		int discardCount = (rand() %200);
 		int handCount = (2 + (rand() % 50));
 		int player;
 		for (player=0; player < numPlayers; player++) {
@@ -104,8 +107,8 @@ int main() {
 
 		// HIT IT!
 		status = playAdventurer(testGame);
-
-		/*
+		
+		
 		if (status == -1) {
 			bugReport(infLoop, numPlayers, handCount, discardCount, deckCount, kingdomCards);
 			failures++;
@@ -118,7 +121,7 @@ int main() {
 			segFaults++;
 			continue;
 		}
-		*/
+		
 
 		int totalCardsPost = testGame->deckCount[testGame->whoseTurn] + testGame->discardCount[testGame->whoseTurn] + testGame->handCount[testGame->whoseTurn];
 		int handCountPost = testGame->handCount[testGame->whoseTurn];
@@ -128,7 +131,7 @@ int main() {
 		if (totalCardsPost != totalCardsPre) {
 			memset(errMsg, 0, 50);
 			strcpy(errMsg, "Number of total cards don't match.");
-			//bugReport(errMsg, numPlayers,handCount, discardCount, deckCount, kingdomCards);
+			bugReport(errMsg, numPlayers,handCount, discardCount, deckCount, kingdomCards);
 		    failures++;
 		}	
 		else 
@@ -137,7 +140,7 @@ int main() {
 		if (handCountPost != (handCountPre + 2) ) {
 			memset(errMsg, 0, 50);
 			strcpy(errMsg, "Player does not have exactly 2 more cards in his hand");
-			//bugReport(errMsg, numPlayers,handCount, discardCount, deckCount, kingdomCards);
+			bugReport(errMsg, numPlayers,handCount, discardCount, deckCount, kingdomCards);
 		    failures++;
 		}
 		else
@@ -146,7 +149,7 @@ int main() {
 		if (deck_n_discardCountPost != (deck_n_discardCountPre - 2) ) {
 			memset(errMsg, 0, 50);
 			strcpy(errMsg, "Player does not have exactly 2 less cards in his deck and discard");
-			//bugReport(errMsg, numPlayers,handCount, discardCount, deckCount, kingdomCards);
+			bugReport(errMsg, numPlayers,handCount, discardCount, deckCount, kingdomCards);
 		    failures++;
 		}
 		else
@@ -155,25 +158,22 @@ int main() {
 		if (moneyPost < (moneyPre+2)  || (moneyPost > moneyPre+12) ) {
 			memset(errMsg, 0, 50);
 			strcpy(errMsg, "Player did not gain correct amount of money");
-			//bugReport(errMsg, numPlayers,handCount, discardCount, deckCount, kingdomCards);
+			bugReport(errMsg, numPlayers,handCount, discardCount, deckCount, kingdomCards);
 		    failures++;
 		}
 		else
 			successes++;
-
-		//printf("Test Number: %d\n", times);
 	}			
 
 
 	// Now perform randomization for test such that adventurer does not shuffle revealed cards
-	 /*
 	for (times=0; times < NUM_TESTS; times++) {
 	  SelectStream(rand()%256);
 	  PutSeed((long)rand());
 	  memset(kingdomCards, 0, sizeof(kingdomCards));
 	  selectKingdomCards( rand()%256, kingdomCards);
 		// randomize players
-		numPlayers = rand() % MAX_PLAYERS;
+		numPlayers = 1+ abs(rand() % (MAX_PLAYERS+1));
 		memset(testGame, 0, sizeof(struct gameState));
 		testGame->numPlayers = numPlayers;
 
@@ -251,6 +251,20 @@ int main() {
 		status = playAdventurer(testGame);
 
 		
+		if (status == -1) {
+			bugReport(infLoop, numPlayers, handCount, discardCount, deckCount, kingdomCards);
+			failures++;
+			infiniteLoops++;
+			continue;
+		}
+		else if (status == -2) {
+			bugReport(segFaultMsg, numPlayers, handCount, discardCount, deckCount, kingdomCards);
+			failures++;
+			segFaults++;
+			continue;
+		}
+		
+		
 		int cardInDeckError = 0;	
 		// Ensure card was not then shuffled into the player's deck	
 		for ( i=0; i < testGame->deckCount[currentPlayer]; i++) {
@@ -267,14 +281,11 @@ int main() {
 		}
 		else
 			successes++;
-
-	printf("Test Number: %d \n", times);
 	}	
-*/
 
 	free(testGame);
 	
-		printf("TEST ADVENTURER RESULTS: \nPASSED: %d FAILED: %d  \n\n", successes, failures); 
+		printf("TEST ADVENTURER RESULTS: \nPASSED: %d FAILED: %d INFINITE LOOPS: %d  SEGFAULTS: %d \n\n", successes, failures, infiniteLoops, segFaults); 
 
 
 	return 0;
