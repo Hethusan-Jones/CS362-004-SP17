@@ -1,0 +1,157 @@
+        -:    0:Source:unittest3.c
+        -:    0:Graph:unittest3.gcno
+        -:    0:Data:unittest3.gcda
+        -:    0:Runs:4
+        -:    0:Programs:1
+        -:    1:#include "dominion.h"
+        -:    2:#include <assert.h>
+        -:    3:#include <time.h>
+        -:    4:#include <string.h>
+        -:    5:#include <stdio.h>
+        -:    6:#include <stdlib.h>
+        -:    7:#include "interface.h"
+        -:    8:#include <math.h>
+        -:    9:
+        -:   10:#define NUM_TESTS 100
+        -:   11:
+        -:   12:int num_tests = 0;
+        -:   13:
+        -:   14:int test_EndTurn(int numPlayers);
+        -:   15:
+        -:   16:
+        -:   17:// So, should update: 
+        -:   18:// 		- current player should be incremented by 1, or should be set to 0 if it is the last player's turn
+        -:   19://		- update the discard pile for former player
+        -:   20://		- hand count should be 0 for former player
+        -:   21://		- the game's number of actions AND buys should be set to 1
+        -:   22://		- the game's coins, outPostPlayed, phase, and playedCardCount should be set to 0
+        -:   23://		- the new player should have a a handcount of 5
+        -:   24://		- the new player should have an updated number of coins
+        -:   25:// 		
+        -:   26:// 		- Other than that, the mem comparison should be equal
+        -:   27://
+        -:   28:
+        -:   29:// Wrapper for test function which runs it for 2-4 players
+function testEndTurnWrapper called 4 returned 100% blocks executed 100%
+        4:   30:void testEndTurnWrapper() {
+        -:   31:	int i; 
+        4:   32:	int numPassed=0;
+        -:   33:
+        4:   34:	printf("\n----------- UNIT TEST 3 ------------\n");
+call    0 returned 100%
+        4:   35:	printf("\nTesting GameState consistency after calls to endTurn()\n");	
+call    0 returned 100%
+       16:   36:	for (i=2; i <= MAX_PLAYERS; i++) {
+branch  0 taken 75%
+branch  1 taken 25% (fallthrough)
+       12:   37:		numPassed += test_EndTurn(i);
+call    0 returned 100%
+        -:   38:	}
+        -:   39:
+        4:   40:	printf("%d out of %d tests passed.\n", numPassed, NUM_TESTS * (MAX_PLAYERS-1));
+call    0 returned 100%
+        -:   41:	
+        4:   42:}
+        -:   43:
+function test_EndTurn called 12 returned 100% blocks executed 92%
+       12:   44:int test_EndTurn(int numPlayers) {
+       12:   45:	int cards[10] = {adventurer, council_room, feast, gardens, mine,
+        -:   46:	       outpost, smithy, village, baron, great_hall};
+        -:   47:	//int cards[NUM_K_CARDS];
+        -:   48:	int i; 
+        -:   49:	int equal;
+        -:   50:	int testNumber;
+       12:   51:	int successes = 0, failures = 0;
+        -:   52:	int currentPlayer, nextPlayer;
+        -:   53:
+       12:   54:	struct gameState* testGame = newGame();
+call    0 returned 100%
+       12:   55:	struct gameState* postGame = newGame();
+call    0 returned 100%
+        -:   56:
+        -:   57:	// Run tests various times for each different number of players 
+        -:   58:
+     1212:   59:	for (testNumber=0; testNumber < NUM_TESTS; testNumber++) {
+branch  0 taken 99%
+branch  1 taken 1% (fallthrough)
+     1200:   60:		num_tests++;
+        -:   61:
+     1200:   62:		memset(testGame, 0, sizeof(struct gameState));
+     1200:   63:		initializeGame(numPlayers, cards, 1, testGame);
+call    0 returned 100%
+     1200:   64:		memcpy(postGame, testGame, sizeof(struct gameState));
+        -:   65:
+     1200:   66:			currentPlayer = whoseTurn(testGame);
+call    0 returned 100%
+     1200:   67:			endTurn(testGame);
+call    0 returned 100%
+        -:   68:			// Now manually update second game 
+     1200:   69:			int currentPlayer_HC = postGame->handCount[currentPlayer]; 
+     7200:   70:			for (i = 0; i < currentPlayer_HC; i++){
+branch  0 taken 83%
+branch  1 taken 17% (fallthrough)
+     6000:   71:				postGame->discard[currentPlayer][postGame->discardCount[currentPlayer]++] = postGame->hand[currentPlayer][i];//Discard
+     6000:   72:				postGame->hand[currentPlayer][i] = -1;//Set card to -1
+        -:   73:				//postGame->discardCount[currentPlayer]++; // Up former player's discard count - may be redundant from two lines above
+     6000:   74:				postGame->handCount[currentPlayer]--;
+        -:   75:			  }
+        -:   76:
+     1200:   77:			postGame->discardCount[currentPlayer] = 5;
+     1200:   78:			postGame->outpostPlayed = 0;
+     1200:   79:			postGame->outpostTurn = 0;
+     1200:   80:			postGame->coins = 0;
+     1200:   81:			postGame->numBuys = 1;
+     1200:   82:			postGame->numActions = 1;
+     1200:   83:			postGame->whoseTurn = (currentPlayer + 1)%numPlayers;
+     7200:   84:			for (i=0; i< 5; i++) 
+branch  0 taken 83%
+branch  1 taken 17% (fallthrough)
+     6000:   85:				drawCard(postGame->whoseTurn, postGame);
+call    0 returned 100%
+        -:   86:			//printf("Hand Count of Game 1 Player %d: %d\t Hand Count of Game 2 Player %d: %d\n", currentPlayer, testGame->handCount[currentPlayer], postGame->whoseTurn, postGame->handCount[postGame->whoseTurn]);
+        -:   87:			//printf("Discard Count of Game 1 Player %d: %d\t Discard Count of Game 2 Player %d: %d\n", currentPlayer, testGame->discardCount[currentPlayer], postGame->whoseTurn, postGame->discardCount[postGame->whoseTurn]);
+        -:   88:
+     1200:   89:			updateCoins(postGame->whoseTurn, postGame , 0);
+call    0 returned 100%
+        -:   90:
+        -:   91:
+     1200:   92:		equal = memcmp(postGame, testGame, sizeof(struct gameState));
+     1200:   93:		if (equal != 0) 
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:   94:			failures++; 
+        -:   95:		else 
+     1200:   96:			successes++;
+        -:   97:		
+        -:   98:	}
+        -:   99:	
+       12:  100:	if (failures != 0)
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:  101:		printf("Gamestate consistency NOT maintained for %d out of %d for %d players\n", failures, successes+failures, numPlayers);
+call    0 never executed
+        -:  102:
+       12:  103:	printf("Gamestate consistency maintained for %d out of %d for %d players\n", successes, successes+failures, numPlayers);
+call    0 returned 100%
+        -:  104:	//printf("ALL %d TESTS PASSED FOR %d PLAYERS.\n", successes, numPlayers);
+        -:  105:
+       12:  106:	free(postGame);
+       12:  107:	free(testGame);
+        -:  108:
+       12:  109:	return successes;
+        -:  110:}
+        -:  111:
+function main called 4 returned 100% blocks executed 100%
+        4:  112:int main() {
+        4:  113:	testEndTurnWrapper();
+call    0 returned 100%
+        -:  114:
+        4:  115:	return 0;
+        -:  116:}
+        -:  117:
+        -:  118:
+        -:  119:
+        -:  120:	
+        -:  121:	
+        -:  122:
+        -:  123:

@@ -1,0 +1,81 @@
+H/W path      Device  Class      Description
+============================================
+                      system     Computer
+/0                    bus        Motherboard
+/0/0                  memory     94GiB System memory
+/0/1                  processor  Intel(R) Xeon(R) CPU           X5650  @ 2.67GHz
+/0/2                  processor  Intel(R) Xeon(R) CPU           X5650  @ 2.67GHz
+/0/100                bridge     5500 I/O Hub to ESI Port
+/0/100/1              bridge     5520/5500/X58 I/O Hub PCI Express Root Port 1
+/0/100/1/0    em1     network    NetXtreme II BCM5709 Gigabit Ethernet
+/0/100/1/0.1  em2     network    NetXtreme II BCM5709 Gigabit Ethernet
+/0/100/3              bridge     5520/5500/X58 I/O Hub PCI Express Root Port 3
+/0/100/3/0    em3     network    NetXtreme II BCM5709 Gigabit Ethernet
+/0/100/3/0.1  em4     network    NetXtreme II BCM5709 Gigabit Ethernet
+/0/100/7              bridge     5520/5500/X58 I/O Hub PCI Express Root Port 7
+/0/100/9              bridge     7500/5520/5500/X58 I/O Hub PCI Express Root Port 9
+/0/100/14             generic    7500/5520/5500/X58 I/O Hub System Management Registers
+/0/100/14.1           generic    7500/5520/5500/X58 I/O Hub GPIO and Scratch Pad Registers
+/0/100/14.2           generic    7500/5520/5500/X58 I/O Hub Control Status and RAS Registers
+/0/100/1a             bus        82801I (ICH9 Family) USB UHCI Controller #4
+/0/100/1a.1           bus        82801I (ICH9 Family) USB UHCI Controller #5
+/0/100/1a.7           bus        82801I (ICH9 Family) USB2 EHCI Controller #2
+/0/100/1c             bridge     82801I (ICH9 Family) PCI Express Port 1
+/0/100/1c/0           storage    MegaRAID SAS 1078
+/0/100/1d             bus        82801I (ICH9 Family) USB UHCI Controller #1
+/0/100/1d.1           bus        82801I (ICH9 Family) USB UHCI Controller #2
+/0/100/1d.7           bus        82801I (ICH9 Family) USB2 EHCI Controller #1
+/0/100/1e             bridge     82801 PCI Bridge
+/0/100/1e/3           display    MGA G200eW WPCM450
+/0/100/1f             bridge     82801IB (ICH9) LPC Interface Controller
+/0/101                bridge     Xeon 5600 Series QuickPath Architecture Generic Non-core Registers
+/0/102                bridge     Xeon 5600 Series QuickPath Architecture System Address Decoder
+/0/103                bridge     Xeon 5600 Series QPI Link 0
+/0/104                bridge     Xeon 5600 Series QPI Physical 0
+/0/105                bridge     Xeon 5600 Series Mirror Port Link 0
+/0/106                bridge     Xeon 5600 Series Mirror Port Link 1
+/0/107                bridge     Xeon 5600 Series QPI Link 1
+/0/108                bridge     Xeon 5600 Series QPI Physical 1
+/0/109                bridge     Xeon 5600 Series Integrated Memory Controller Registers
+/0/10a                bridge     Xeon 5600 Series Integrated Memory Controller Target Address Decoder
+/0/10b                bridge     Xeon 5600 Series Integrated Memory Controller RAS Registers
+/0/10c                bridge     Xeon 5600 Series Integrated Memory Controller Test Registers
+/0/10d                bridge     Xeon 5600 Series Integrated Memory Controller Channel 0 Control
+/0/10e                bridge     Xeon 5600 Series Integrated Memory Controller Channel 0 Address
+/0/10f                bridge     Xeon 5600 Series Integrated Memory Controller Channel 0 Rank
+/0/110                bridge     Xeon 5600 Series Integrated Memory Controller Channel 0 Thermal Control
+/0/111                bridge     Xeon 5600 Series Integrated Memory Controller Channel 1 Control
+/0/112                bridge     Xeon 5600 Series Integrated Memory Controller Channel 1 Address
+/0/113                bridge     Xeon 5600 Series Integrated Memory Controller Channel 1 Rank
+/0/114                bridge     Xeon 5600 Series Integrated Memory Controller Channel 1 Thermal Control
+/0/115                bridge     Xeon 5600 Series Integrated Memory Controller Channel 2 Control
+/0/116                bridge     Xeon 5600 Series Integrated Memory Controller Channel 2 Address
+/0/117                bridge     Xeon 5600 Series Integrated Memory Controller Channel 2 Rank
+/0/118                bridge     Xeon 5600 Series Integrated Memory Controller Channel 2 Thermal Control
+/0/119                bridge     Xeon 5600 Series QuickPath Architecture Generic Non-core Registers
+/0/11a                bridge     Xeon 5600 Series QuickPath Architecture System Address Decoder
+/0/11b                bridge     Xeon 5600 Series QPI Link 0
+/0/11c                bridge     Xeon 5600 Series QPI Physical 0
+/0/11d                bridge     Xeon 5600 Series Mirror Port Link 0
+/0/11e                bridge     Xeon 5600 Series Mirror Port Link 1
+/0/11f                bridge     Xeon 5600 Series QPI Link 1
+/0/120                bridge     Xeon 5600 Series QPI Physical 1
+/0/121                bridge     Xeon 5600 Series Integrated Memory Controller Registers
+/0/122                bridge     Xeon 5600 Series Integrated Memory Controller Target Address Decoder
+/0/123                bridge     Xeon 5600 Series Integrated Memory Controller RAS Registers
+/0/124                bridge     Xeon 5600 Series Integrated Memory Controller Test Registers
+/0/125                bridge     Xeon 5600 Series Integrated Memory Controller Channel 0 Control
+/0/126                bridge     Xeon 5600 Series Integrated Memory Controller Channel 0 Address
+/0/127                bridge     Xeon 5600 Series Integrated Memory Controller Channel 0 Rank
+/0/128                bridge     Xeon 5600 Series Integrated Memory Controller Channel 0 Thermal Control
+/0/129                bridge     Xeon 5600 Series Integrated Memory Controller Channel 1 Control
+/0/12a                bridge     Xeon 5600 Series Integrated Memory Controller Channel 1 Address
+/0/12b                bridge     Xeon 5600 Series Integrated Memory Controller Channel 1 Rank
+/0/12c                bridge     Xeon 5600 Series Integrated Memory Controller Channel 1 Thermal Control
+/0/12d                bridge     Xeon 5600 Series Integrated Memory Controller Channel 2 Control
+/0/12e                bridge     Xeon 5600 Series Integrated Memory Controller Channel 2 Address
+/0/12f                bridge     Xeon 5600 Series Integrated Memory Controller Channel 2 Rank
+/0/130                bridge     Xeon 5600 Series Integrated Memory Controller Channel 2 Thermal Control
+/1            scsi4   storage    
+/2            scsi5   storage    
+/3            bond0   network    Ethernet interface

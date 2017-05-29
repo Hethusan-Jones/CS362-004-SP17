@@ -1,0 +1,487 @@
+        -:    0:Source:unittest1.c
+        -:    0:Graph:unittest1.gcno
+        -:    0:Data:unittest1.gcda
+        -:    0:Runs:4
+        -:    0:Programs:1
+        -:    1:#include "dominion.h"
+        -:    2:#include <string.h>
+        -:    3:#include <stdio.h>
+        -:    4:#include "rngs.h"
+        -:    5:#include "interface.h"
+        -:    6:
+        -:    7://#define NUM_CARDS (treasure_map - curse)
+        -:    8:
+        -:    9:char successStr[] = "TEST PASSED";
+        -:   10:char failStr[] = "TEST FAILED"; 
+        -:   11:
+function assertNum called 48 returned 100% blocks executed 100%
+       48:   12:int assertNum(int shouldHave, int doesHave) {
+       48:   13:	printf("Should have: %d, Does Have: %d\n", shouldHave, doesHave);
+call    0 returned 100%
+       48:   14:	if (shouldHave != doesHave) {
+branch  0 taken 17% (fallthrough)
+branch  1 taken 83%
+        8:   15:		printf("%s\n", failStr);
+call    0 returned 100%
+        8:   16:		return 0;
+        -:   17:	}
+        -:   18:	else {
+        -:   19:		//printf("%s\n", successStr);	
+       40:   20:		return 1;
+        -:   21:	}
+        -:   22:}
+        -:   23:
+        -:   24:
+        -:   25:/* **************************
+        -:   26: * Test numHandCards()
+        -:   27: * Description: Test a few different cards to ensure proper tracking 
+        -:   28: * of hand count by function numHandCards()
+        -:   29: * *************************/
+        -:   30:
+function testNumHandCards called 4 returned 100% blocks executed 100%
+        4:   31:int testNumHandCards() {
+        -:   32:	
+        4:   33:	int k[10] = {adventurer, cutpurse, embargo, village, minion, mine, great_hall,
+        -:   34:           sea_hag, council_room, smithy};
+        -:   35:
+        4:   36:	struct gameState* testGame  = newGame();
+call    0 returned 100%
+        4:   37:	int i = 0;
+        -:   38:    //int randArray[10];
+        4:   39:	int targetCardFound = 0; // 0 for False, 1 for True
+        -:   40:	int targetCard;
+        -:   41:	int targetCardPos;
+        4:   42:	int numTestsPassed = 0;
+        4:   43:	int numTests = 1;
+        -:   44:	char cardName[100];
+        4:   45:	memset(cardName, 0, 100);
+        -:   46:
+        -:   47:	
+        -:   48:
+        -:   49:	/*
+        -:   50:	for (i=0; i < 10; i++) {
+        -:   51:		randArray[i] = floor(Random() * NUM_CARDS);
+        -:   52:	}
+        -:   53:	*/
+        -:   54:
+        4:   55:	initializeGame(2, k, 1, testGame);
+call    0 returned 100%
+        -:   56:	// Buy cards to be tested for player 1
+        4:   57:	testGame->numBuys = 7;
+        4:   58:	testGame->coins = 100;
+        4:   59:	buyCard(embargo, testGame);
+call    0 returned 100%
+        4:   60:	buyCard(minion, testGame);
+call    0 returned 100%
+        4:   61:	buyCard(council_room, testGame);
+call    0 returned 100%
+        4:   62:	buyCard(smithy, testGame);
+call    0 returned 100%
+        4:   63:	buyCard(village, testGame);
+call    0 returned 100%
+        4:   64:	buyCard(sea_hag, testGame);
+call    0 returned 100%
+        4:   65:	buyCard(great_hall, testGame);
+call    0 returned 100%
+        4:   66:	buyCard(cutpurse, testGame);
+call    0 returned 100%
+        4:   67:	endTurn(testGame);
+call    0 returned 100%
+        -:   68:	// Now do this for player 2
+        4:   69:	testGame->numBuys = 7;
+        4:   70:	testGame->coins = 100;
+        4:   71:	buyCard(embargo, testGame);
+call    0 returned 100%
+        4:   72:	buyCard(minion, testGame);
+call    0 returned 100%
+        4:   73:	buyCard(council_room, testGame);
+call    0 returned 100%
+        4:   74:	buyCard(smithy, testGame);
+call    0 returned 100%
+        4:   75:	buyCard(cutpurse, testGame);
+call    0 returned 100%
+        4:   76:	buyCard(village, testGame);
+call    0 returned 100%
+        4:   77:	buyCard(sea_hag, testGame);
+call    0 returned 100%
+        4:   78:	buyCard(great_hall, testGame);
+call    0 returned 100%
+        4:   79:	endTurn(testGame);
+call    0 returned 100%
+        -:   80:
+        -:   81:
+        -:   82:	// Start of game both players should have 5 in hand
+        -:   83:	// First player 1
+        -:   84:	
+        4:   85:	printf("\nUNIT TEST 1\n");
+call    0 returned 100%
+        4:   86:	printf("\n--------- TEST 1 ------------\n");
+call    0 returned 100%
+        4:   87:	printf("At start of turn, players should have 5 cards in hand.\n");
+call    0 returned 100%
+        4:   88:	printf("Player %d ", whoseTurn(testGame)+1);
+call    0 returned 100%
+call    1 returned 100%
+        4:   89:	numTestsPassed += assertNum(5, numHandCards(testGame));
+call    0 returned 100%
+call    1 returned 100%
+        4:   90:	numTests++;
+        4:   91:	endTurn(testGame);
+call    0 returned 100%
+        -:   92:	// Now player 2
+        4:   93:	printf("Player %d ", whoseTurn(testGame)+1);
+call    0 returned 100%
+call    1 returned 100%
+        4:   94:	numTestsPassed += assertNum(5, numHandCards(testGame));
+call    0 returned 100%
+call    1 returned 100%
+        4:   95:	numTests++;
+        4:   96:	endTurn(testGame);
+call    0 returned 100%
+        -:   97:	// Do this once more for each player
+        4:   98:	printf("Player %d ", whoseTurn(testGame)+1);
+call    0 returned 100%
+call    1 returned 100%
+        4:   99:	numTestsPassed += assertNum(5, numHandCards(testGame));
+call    0 returned 100%
+call    1 returned 100%
+        4:  100:	numTests++;
+        4:  101:	endTurn(testGame);
+call    0 returned 100%
+        4:  102:	printf("Player %d ", whoseTurn(testGame)+1);
+call    0 returned 100%
+call    1 returned 100%
+        4:  103:	numTestsPassed += assertNum(5, numHandCards(testGame));
+call    0 returned 100%
+call    1 returned 100%
+        4:  104:	numTests++;
+        -:  105:	
+        -:  106:	
+        -:  107:	// Play cards, ensuring proper number of cards returned after each card
+        -:  108:
+        4:  109:	printf("\n--------- TEST 2 ------------\n");
+call    0 returned 100%
+        -:  110:	// Test 5	
+        4:  111:	targetCard = embargo;
+        4:  112:	cardNumToName(targetCard, cardName);
+call    0 returned 100%
+        4:  113:	printf("Playing %s,", cardName);
+call    0 returned 100%
+       24:  114:	while (!targetCardFound) {
+branch  0 taken 80%
+branch  1 taken 20% (fallthrough)
+       96:  115:		for (i=0; i < testGame->handCount[whoseTurn(testGame)]; i++) {
+call    0 returned 100%
+branch  1 taken 83%
+branch  2 taken 17% (fallthrough)
+       80:  116:			if ( testGame->hand[whoseTurn(testGame)][i] ==  targetCard) {
+call    0 returned 100%
+branch  1 taken 5% (fallthrough)
+branch  2 taken 95%
+        4:  117:				targetCardFound = 1;
+        4:  118:				targetCardPos = i;
+        -:  119:			}
+        -:  120:		}
+       16:  121:		if (targetCardFound) {
+branch  0 taken 25% (fallthrough)
+branch  1 taken 75%
+        4:  122:			playCard(targetCardPos, 1, -1, -1, testGame);
+call    0 returned 100%
+        -:  123:		// Should have 4 cards
+        4:  124:			numTestsPassed += assertNum(4, numHandCards(testGame));
+call    0 returned 100%
+call    1 returned 100%
+        4:  125:			numTests++;
+        -:  126:		}
+       16:  127:		endTurn(testGame);
+call    0 returned 100%
+        -:  128:	}
+        4:  129:	targetCardFound = 0;
+        -:  130:	
+        -:  131:	// Test 6
+        4:  132:	targetCard = village;
+        4:  133:	memset(cardName, 0, 100);
+        4:  134:	cardNumToName(targetCard, cardName);
+call    0 returned 100%
+        4:  135:	printf("Playing %s,", cardName);
+call    0 returned 100%
+       12:  136:	while (!targetCardFound) {
+branch  0 taken 50%
+branch  1 taken 50% (fallthrough)
+       24:  137:		for (i=0; i < testGame->handCount[whoseTurn(testGame)]; i++) {
+call    0 returned 100%
+branch  1 taken 83%
+branch  2 taken 17% (fallthrough)
+       20:  138:			if ( testGame->hand[whoseTurn(testGame)][i] ==  targetCard) {
+call    0 returned 100%
+branch  1 taken 20% (fallthrough)
+branch  2 taken 80%
+        4:  139:				targetCardFound = 1;
+        4:  140:				targetCardPos = i;
+        -:  141:			}
+        -:  142:		}
+        4:  143:		if (targetCardFound) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        4:  144:			playCard(targetCardPos, -1, -1, -1, testGame);
+call    0 returned 100%
+        -:  145:			// Should still have 5 cards because of village +1 card
+        4:  146:			numTestsPassed += assertNum(5, numHandCards(testGame));
+call    0 returned 100%
+call    1 returned 100%
+        4:  147:			numTests++;
+        -:  148:		}
+        4:  149:		endTurn(testGame);
+call    0 returned 100%
+        -:  150:	}
+        4:  151:	targetCardFound = 0;
+        -:  152:
+        -:  153:	// Test 7
+        4:  154:	targetCard = minion;
+        4:  155:	memset(cardName, 0, 100);
+        4:  156:	cardNumToName(targetCard, cardName);
+call    0 returned 100%
+        4:  157:	printf("Playing %s,", cardName);
+call    0 returned 100%
+       16:  158:	while (!targetCardFound) {
+branch  0 taken 67%
+branch  1 taken 33% (fallthrough)
+       48:  159:		for (i=0; i < testGame->handCount[whoseTurn(testGame)]; i++) {
+call    0 returned 100%
+branch  1 taken 83%
+branch  2 taken 17% (fallthrough)
+       40:  160:			if ( testGame->hand[whoseTurn(testGame)][i] ==  targetCard) {
+call    0 returned 100%
+branch  1 taken 10% (fallthrough)
+branch  2 taken 90%
+        4:  161:				targetCardFound = 1;
+        4:  162:				targetCardPos = i;
+        -:  163:			}
+        -:  164:		}
+        8:  165:		if (targetCardFound) {
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        4:  166:			playCard(targetCardPos, -1, -1, -1, testGame);
+call    0 returned 100%
+        -:  167:			// Should have 4 cards after minion redraw
+        -:  168:			
+        4:  169:			numTestsPassed += assertNum(4, numHandCards(testGame));
+call    0 returned 100%
+call    1 returned 100%
+        4:  170:			numTests++;
+        -:  171:		}
+        8:  172:		endTurn(testGame);
+call    0 returned 100%
+        -:  173:	}
+        4:  174:	targetCardFound = 0;
+        -:  175:	
+        -:  176:	// Test 8
+        4:  177:	targetCard = cutpurse;
+        4:  178:	memset(cardName, 0, 100);
+        4:  179:	cardNumToName(targetCard, cardName);
+call    0 returned 100%
+        4:  180:	printf("Playing card %s,", cardName);
+call    0 returned 100%
+       16:  181:	while (!targetCardFound) {
+branch  0 taken 67%
+branch  1 taken 33% (fallthrough)
+       48:  182:		for (i=0; i < testGame->handCount[whoseTurn(testGame)]; i++) {
+call    0 returned 100%
+branch  1 taken 83%
+branch  2 taken 17% (fallthrough)
+       40:  183:			if ( testGame->hand[whoseTurn(testGame)][i] ==  targetCard) {
+call    0 returned 100%
+branch  1 taken 10% (fallthrough)
+branch  2 taken 90%
+        4:  184:				targetCardFound = 1;
+        4:  185:				targetCardPos = i;
+        -:  186:			}
+        -:  187:		}
+        8:  188:		if (targetCardFound) {
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        4:  189:			playCard(targetCardPos, -1, -1, -1, testGame);
+call    0 returned 100%
+        -:  190:			// Should have 4 cards after use of cutpurse
+        4:  191:			numTestsPassed += assertNum(4, numHandCards(testGame));
+call    0 returned 100%
+call    1 returned 100%
+        4:  192:			numTests++;
+        -:  193:		}
+        8:  194:		endTurn(testGame);
+call    0 returned 100%
+        -:  195:	}
+        4:  196:	targetCardFound = 0;
+        -:  197:
+        -:  198:	// Test 9
+        4:  199:	targetCard = great_hall;
+        4:  200:	memset(cardName, 0, 100);
+        4:  201:	cardNumToName(targetCard, cardName);
+call    0 returned 100%
+        4:  202:	printf("Playing %s,", cardName);
+call    0 returned 100%
+       28:  203:	while (!targetCardFound) {
+branch  0 taken 83%
+branch  1 taken 17% (fallthrough)
+      120:  204:		for (i=0; i < testGame->handCount[whoseTurn(testGame)]; i++) {
+call    0 returned 100%
+branch  1 taken 83%
+branch  2 taken 17% (fallthrough)
+      100:  205:			if ( testGame->hand[whoseTurn(testGame)][i] ==  targetCard) {
+call    0 returned 100%
+branch  1 taken 4% (fallthrough)
+branch  2 taken 96%
+        4:  206:				targetCardFound = 1;
+        4:  207:				targetCardPos = i;
+        -:  208:			}
+        -:  209:		}
+       20:  210:		if (targetCardFound) {
+branch  0 taken 20% (fallthrough)
+branch  1 taken 80%
+        4:  211:			playCard(targetCardPos, -1, -1, -1, testGame);
+call    0 returned 100%
+        -:  212:			// Should have 5 cards after use of great_hall
+        4:  213:			numTestsPassed += assertNum(5, numHandCards(testGame));
+call    0 returned 100%
+call    1 returned 100%
+        4:  214:			numTests++;
+        -:  215:		}
+       20:  216:		endTurn(testGame);
+call    0 returned 100%
+        -:  217:	}
+        4:  218:	targetCardFound = 0;
+        -:  219:
+        -:  220:	// Test 10
+        4:  221:	targetCard = sea_hag;
+        4:  222:	memset(cardName, 0, 100);
+        4:  223:	cardNumToName(targetCard, cardName);
+call    0 returned 100%
+        4:  224:	printf("Playing %s,", cardName);
+call    0 returned 100%
+       12:  225:	while (!targetCardFound) {
+branch  0 taken 50%
+branch  1 taken 50% (fallthrough)
+       24:  226:		for (i=0; i < testGame->handCount[whoseTurn(testGame)]; i++) {
+call    0 returned 100%
+branch  1 taken 83%
+branch  2 taken 17% (fallthrough)
+       20:  227:			if ( testGame->hand[whoseTurn(testGame)][i] ==  targetCard) {
+call    0 returned 100%
+branch  1 taken 20% (fallthrough)
+branch  2 taken 80%
+        4:  228:				targetCardFound = 1;
+        4:  229:				targetCardPos = i;
+        -:  230:			}
+        -:  231:		}
+        4:  232:		if (targetCardFound) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        4:  233:			playCard(targetCardPos, -1, -1, -1, testGame);
+call    0 returned 100%
+        -:  234:			// Should have 4 cards after seahag 
+        4:  235:			numTestsPassed += assertNum(4, numHandCards(testGame));
+call    0 returned 100%
+call    1 returned 100%
+        4:  236:			numTests++;
+        -:  237:		}
+        4:  238:		endTurn(testGame);
+call    0 returned 100%
+        -:  239:	}
+        4:  240:	targetCardFound = 0;
+        -:  241:
+        -:  242:	// Test 11
+        4:  243:	targetCard = council_room;
+        4:  244:	memset(cardName, 0, 100);
+        4:  245:	cardNumToName(targetCard, cardName);
+call    0 returned 100%
+        4:  246:	printf("Playing %s,", cardName);
+call    0 returned 100%
+       24:  247:	while (!targetCardFound) {
+branch  0 taken 80%
+branch  1 taken 20% (fallthrough)
+       96:  248:		for (i=0; i < testGame->handCount[whoseTurn(testGame)]; i++) {
+call    0 returned 100%
+branch  1 taken 83%
+branch  2 taken 17% (fallthrough)
+       80:  249:			if ( testGame->hand[whoseTurn(testGame)][i] ==  targetCard) {
+call    0 returned 100%
+branch  1 taken 5% (fallthrough)
+branch  2 taken 95%
+        4:  250:				targetCardFound = 1;
+        4:  251:				targetCardPos = i;
+        -:  252:			}
+        -:  253:		}
+       16:  254:		if (targetCardFound) {
+branch  0 taken 25% (fallthrough)
+branch  1 taken 75%
+        4:  255:			playCard(targetCardPos, -1, -1, -1, testGame);
+call    0 returned 100%
+        -:  256:			// Should have 8 cards after council room's +4 cards
+        4:  257:			numTestsPassed += assertNum(8, numHandCards(testGame));
+call    0 returned 100%
+call    1 returned 100%
+        4:  258:			numTests++;
+        -:  259:		}
+       16:  260:		endTurn(testGame);
+call    0 returned 100%
+        -:  261:	}
+        4:  262:	targetCardFound = 0;
+        -:  263:
+        -:  264:	// Test 12
+        4:  265:	targetCard = smithy;
+        4:  266:	memset(cardName, 0, 100);
+        4:  267:	cardNumToName(targetCard, cardName);
+call    0 returned 100%
+        4:  268:	printf("Playing %s,", cardName);
+call    0 returned 100%
+       20:  269:	while (!targetCardFound) {
+branch  0 taken 75%
+branch  1 taken 25% (fallthrough)
+       72:  270:		for (i=0; i < testGame->handCount[whoseTurn(testGame)]; i++) {
+call    0 returned 100%
+branch  1 taken 83%
+branch  2 taken 17% (fallthrough)
+       60:  271:			if ( testGame->hand[whoseTurn(testGame)][i] ==  targetCard) {
+call    0 returned 100%
+branch  1 taken 7% (fallthrough)
+branch  2 taken 93%
+        4:  272:				targetCardFound = 1;
+        4:  273:				targetCardPos = i;
+        -:  274:			}
+        -:  275:		}
+       12:  276:		if (targetCardFound) {
+branch  0 taken 33% (fallthrough)
+branch  1 taken 67%
+        4:  277:			playCard(targetCardPos, -1, -1, -1, testGame);
+call    0 returned 100%
+        -:  278:			// Should have 7 cards after smithy's +3 cards
+        4:  279:			numTestsPassed += assertNum(7, numHandCards(testGame));
+call    0 returned 100%
+call    1 returned 100%
+        4:  280:			numTests++;
+        -:  281:		}
+       12:  282:		endTurn(testGame);
+call    0 returned 100%
+        -:  283:	}
+        -:  284:
+        4:  285:	numTests--;
+        4:  286:	printf("\nNumber of tests: %d\n"
+call    0 returned 100%
+        -:  287:			"Number of successful tests: %d\n"
+        -:  288:			"Number of failed tests: %d\n", numTests, numTestsPassed, numTests-numTestsPassed);
+        -:  289:
+        4:  290:	return 0;
+        -:  291:}
+        -:  292:
+function main called 4 returned 100% blocks executed 100%
+        4:  293:int main(int argc, char* argv[]) {
+        4:  294:	testNumHandCards();
+call    0 returned 100%
+        -:  295:	
+        4:  296:	return 0;
+        -:  297:}
+        -:  298:
+        -:  299:
+        -:  300:
+        -:  301:
+        -:  302:

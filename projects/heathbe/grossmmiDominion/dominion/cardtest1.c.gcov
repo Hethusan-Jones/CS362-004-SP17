@@ -1,0 +1,210 @@
+        -:    0:Source:cardtest1.c
+        -:    0:Graph:cardtest1.gcno
+        -:    0:Data:cardtest1.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include "dominion.h"
+        -:    2:#include <assert.h>
+        -:    3:#include <stdlib.h>
+        -:    4:#include <string.h>
+        -:    5:#include <stdio.h>
+        -:    6:#include "rngs.h"
+        -:    7:#include "interface.h"
+        -:    8:
+        -:    9:int testSmithy(int numPlayers, int* numTests);
+        -:   10:
+function testSmithyWrapper called 1 returned 100% blocks executed 100%
+        1:   11:void testSmithyWrapper() {
+        1:   12:	int numTests = 0;
+        -:   13:	int i, j;
+        1:   14:	int totalTestsPassed = 0,
+        -:   15:		testsPassed;
+        -:   16:
+        1:   17:	printf("\n---------- SMITHY UNIT TESTS -----------\n");
+call    0 returned 100%
+        4:   18:	for (i=2; i<= MAX_PLAYERS; i++) {
+branch  0 taken 75%
+branch  1 taken 25% (fallthrough)
+        -:   19:		
+        3:   20:		testsPassed = testSmithy(i, &numTests);
+call    0 returned 100%
+        3:   21:		totalTestsPassed += testsPassed;
+        3:   22:		printf("\nTests passed with %d players: %d out of %d.\n\n", i, testsPassed, numTests/(i-1));
+call    0 returned 100%
+        -:   23:	}
+        1:   24:	printf("%d tests passed out of %d tests.\n", totalTestsPassed, numTests);
+call    0 returned 100%
+        -:   25:
+        1:   26:}
+        -:   27:
+        -:   28:
+        -:   29:
+        -:   30:/***************************************************** 
+        -:   31: * TESTING
+        -:   32: * **************************************************/
+function testSmithy called 3 returned 100% blocks executed 82%
+        3:   33:int testSmithy(int numPlayers, int* numTests) {
+        3:   34:	int k[10] = {adventurer, cutpurse, embargo, village, minion, mine, great_hall,
+        -:   35:           sea_hag, council_room, smithy};
+        -:   36:	int i,
+        -:   37:		card,
+        -:   38:		cardPos;
+        -:   39:	int deckCount,
+        -:   40:		deckPostCount;
+        -:   41:	int currentPlayer;
+        3:   42:	int successes=0, 
+        3:   43:		failures=0;
+        -:   44:	int memComp;
+        -:   45:	int smithyPos;
+        -:   46:
+        3:   47:	struct gameState* testGame  = newGame();
+call    0 returned 100%
+        3:   48:	struct gameState* postGame = newGame();
+call    0 returned 100%
+        3:   49:	initializeGame(numPlayers, k, 1, testGame);
+call    0 returned 100%
+        -:   50:
+        -:   51:
+        -:   52:	// Add smithy to deck of players
+       12:   53:	for (i=0; i< numPlayers; i++) 
+branch  0 taken 75%
+branch  1 taken 25% (fallthrough)
+        9:   54:		gainCard(smithy, testGame, 2, i);
+call    0 returned 100%
+        -:   55:
+        3:   56:	int oldNumCards = numHandCards(testGame);
+call    0 returned 100%
+        -:   57:
+        3:   58:	 currentPlayer = testGame->whoseTurn;
+        -:   59:	 // This should be two less after playing smithy, because of +3 cards
+        3:   60:	 deckCount = testGame->deckCount[currentPlayer];
+        -:   61:	 
+        3:   62:	 smithyPos = testGame->handCount[currentPlayer]-1; 
+        -:   63:	 
+        -:   64:	 // Play smithy
+        3:   65:	 memcpy(postGame, testGame, sizeof(struct gameState));
+        3:   66:	 playCard( smithyPos, -1, -1, -1, testGame);
+call    0 returned 100%
+        -:   67:
+        3:   68:	 int newNumCards = numHandCards(testGame);
+call    0 returned 100%
+        3:   69:	 deckPostCount = testGame->deckCount[currentPlayer];
+        3:   70:	 oldNumCards += 2;
+        3:   71:	 printf("Testing Smithy added 3 cards to player's hand...\n");
+call    0 returned 100%
+        3:   72:	 if (oldNumCards != newNumCards) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        3:   73:		 failures++;
+        3:   74:		 printf("ERROR: Smithy did not add 3 cards to player's hand\n");
+call    0 returned 100%
+        -:   75:	 }
+    #####:   76:	 else successes++;
+        -:   77:
+        3:   78:	 printf("Testing Smithy changes the player's deck count...\n");
+call    0 returned 100%
+        3:   79:	 if (deckCount == deckPostCount) {
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:   80:		 failures++;
+    #####:   81:		 printf("ERROR: Smithy did not chance player's deck count.\n");
+call    0 never executed
+        -:   82:	 }
+        3:   83:	 else successes++;
+        -:   84:	 
+        -:   85:
+        -:   86:	 // Now manually implement smithy, to ensure proper state integrity
+        -:   87:	  //+3 Cards
+       12:   88:	  for ( i = 0; i < 3; i++) 
+branch  0 taken 75%
+branch  1 taken 25% (fallthrough)
+        9:   89:		  drawCard(currentPlayer, postGame);
+call    0 returned 100%
+        -:   90:	  //discard card from hand
+        3:   91:	  discardCard(smithyPos, currentPlayer, postGame, 0);
+call    0 returned 100%
+        -:   92:	//reduce number of actions
+        3:   93:	postGame->numActions--;
+        -:   94:	//update coins (Treasure cards may be added with card draws)
+        3:   95:	updateCoins(postGame->whoseTurn, postGame, 0);
+call    0 returned 100%
+        -:   96:
+        -:   97:	 // Now check for state integrity
+        -:   98:	 //
+        3:   99:	  memComp = memcmp(postGame, testGame, sizeof(struct gameState));
+        3:  100:	  printf("Testing gameState integrity...\n");
+call    0 returned 100%
+        3:  101:	  if (memComp != 0) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        3:  102:		  failures++;
+        3:  103:		  printf("ERROR: State changed.\n");
+call    0 returned 100%
+        -:  104:	  }
+    #####:  105:	  else successes++;
+        -:  106:
+        -:  107:	  // Test Kingdom Card integrity
+        3:  108:	  printf("Testing Smithy does not alter supply count of kingdom cards...\n");
+call    0 returned 100%
+       33:  109:	  for (i=0; i<NUM_K_CARDS; i++) {
+branch  0 taken 91%
+branch  1 taken 9% (fallthrough)
+       30:  110:			if (testGame->supplyCount[k[i]] != postGame->supplyCount[k[i]]) {
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+        -:  111:				char cardName[20];
+    #####:  112:				cardNumToName(k[i], cardName);
+call    0 never executed
+    #####:  113:				printf("ERROR: Card %s has been altered.\n", cardName);
+call    0 never executed
+    #####:  114:				failures++;
+        -:  115:			}
+       30:  116:			else successes++;
+       30:  117:			if (i < 4) {
+branch  0 taken 40% (fallthrough)
+branch  1 taken 60%
+       12:  118:				if (testGame->supplyCount[i] != postGame->supplyCount[i]) {
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:  119:					printf("ERROR: Victory card count has been altered\n");
+call    0 never executed
+    #####:  120:					failures++;
+        -:  121:				}
+       12:  122:				else successes++;
+        -:  123:			}
+        -:  124:	  }
+        -:  125:
+        3:  126:	  free(testGame);
+        3:  127:	  free(postGame);
+        3:  128:	  *numTests += successes + failures;
+        3:  129:	  return successes;
+        -:  130:
+        -:  131:}
+        -:  132:
+function main called 1 returned 100% blocks executed 100%
+        1:  133:int main() {
+        1:  134:	testSmithyWrapper();
+call    0 returned 100%
+        -:  135:
+        1:  136:	return 0;
+        -:  137:}
+        -:  138:
+        -:  139:
+        -:  140:
+        -:  141:
+        -:  142:	  
+        -:  143:	  
+        -:  144:
+        -:  145:
+        -:  146:
+        -:  147:
+        -:  148:
+        -:  149:
+        -:  150:
+        -:  151:
+        -:  152:
+        -:  153:
+        -:  154:
+        -:  155:
+        -:  156:
+        -:  157:	

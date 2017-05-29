@@ -1,0 +1,535 @@
+        -:    0:Source:unittest2.c
+        -:    0:Graph:unittest2.gcno
+        -:    0:Data:unittest2.gcda
+        -:    0:Runs:4
+        -:    0:Programs:1
+        -:    1:#include "dominion.h"
+        -:    2:#include <time.h>
+        -:    3:#include <string.h>
+        -:    4:#include <stdio.h>
+        -:    5:#include <stdlib.h>
+        -:    6:#include "interface.h"
+        -:    7:#include <math.h>
+        -:    8:
+        -:    9:
+        -:   10:char over[] = "GAME ENDS";
+        -:   11:char notOver[] = "GAME DOES NOT END";
+        -:   12:
+function assertTest called 48 returned 100% blocks executed 100%
+       48:   13:int assertTest(int *testNum, struct gameState* game) {
+        -:   14:	//printf("Test Number %d\t", *testNum);
+       48:   15:	(*testNum)++;
+       48:   16:	if (isGameOver(game) ) {
+call    0 returned 100%
+branch  1 taken 75% (fallthrough)
+branch  2 taken 25%
+       36:   17:		printf("%s\n", over);
+call    0 returned 100%
+       36:   18:		return 0;
+        -:   19:	}
+        -:   20:	else {
+       12:   21:		printf("%s\n", notOver);
+call    0 returned 100%
+       12:   22:		return 1;
+        -:   23:	}
+        -:   24:	
+        -:   25:}
+        -:   26:
+function testGameOver called 4 returned 100% blocks executed 91%
+        4:   27:void testGameOver() {
+        -:   28:	int cards[NUM_K_CARDS];
+        -:   29:	int i;
+        4:   30:	int testNumber=0;
+        4:   31:	int successes = 0, failures = 0;
+       44:   32:	for (i=7; i< 7+NUM_K_CARDS; i++)
+branch  0 taken 91%
+branch  1 taken 9% (fallthrough)
+       40:   33:		cards[i-7] = i;
+        -:   34:
+        4:   35:	struct gameState* testGame = newGame();
+call    0 returned 100%
+        -:   36:	struct gameState postGame;
+        -:   37:
+        -:   38:	/* Run series of tests for 2, 3, and 4 players */
+        4:   39:	printf("\n----------- UNIT TEST 2 -----------\n");
+call    0 returned 100%
+        -:   40:
+        4:   41:	printf("2-PLAYER TESTS\n\n");
+call    0 returned 100%
+        -:   42:	// Test 3 card depletion
+        4:   43:	memset(testGame, 0, sizeof(struct gameState));
+        4:   44:	initializeGame(2, cards, 1, testGame);
+call    0 returned 100%
+        4:   45:	int total_supply = testGame->supplyCount[cards[0]];
+        -:   46:	//printf("supply of cards is: %d\n", total_supply);
+        4:   47:	testGame->numBuys = 100;
+        4:   48:	testGame->coins = 300;
+       44:   49:	for (i=0; i< total_supply; i++) {
+branch  0 taken 91%
+branch  1 taken 9% (fallthrough)
+       40:   50:		buyCard(cards[0], testGame);
+call    0 returned 100%
+       40:   51:		buyCard(cards[1], testGame);
+call    0 returned 100%
+       40:   52:		buyCard(cards[2], testGame);
+call    0 returned 100%
+        -:   53:	}
+        -:   54:	//printf("Supply piles: %d  %d  %d\n", testGame->supplyCount[cards[0]], testGame->supplyCount[cards[1]],testGame->supplyCount[cards[2]]);
+        -:   55:	//endTurn(testGame);
+        -:   56:
+        4:   57:	printf("Testing 3 card piles depleted\n");
+call    0 returned 100%
+        4:   58:	printf("Expected: %s  Actual: ", over);
+call    0 returned 100%
+        4:   59:	if (assertTest(&testNumber, testGame))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:   60:		failures++;
+        -:   61:	else 
+        4:   62:		successes++;
+        -:   63:
+        -:   64:	// Test province depletion
+        4:   65:	memset(testGame, 0, sizeof(struct gameState));
+        4:   66:	initializeGame(2, cards, 1, testGame);
+call    0 returned 100%
+        4:   67:	total_supply = testGame->supplyCount[province];
+        -:   68:
+        4:   69:	testGame->numBuys = 100;
+        4:   70:	testGame->coins = 300;
+       36:   71:	for (i=0; i< total_supply; i++) 
+branch  0 taken 89%
+branch  1 taken 11% (fallthrough)
+       32:   72:		buyCard(province, testGame);
+call    0 returned 100%
+        -:   73:
+        4:   74:	printf("Testing Province depletion \n");
+call    0 returned 100%
+        4:   75:	printf("Expected: %s  Actual: ", over);
+call    0 returned 100%
+        4:   76:	if (assertTest(&testNumber, testGame))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:   77:		failures++;
+        -:   78:	else 
+        4:   79:		successes++;
+        -:   80:
+        -:   81:	// Test only 2 card supply depletions
+        4:   82:	memset(testGame, 0, sizeof(struct gameState));
+        4:   83:	initializeGame(2, cards, 1, testGame);
+call    0 returned 100%
+        4:   84:	total_supply = testGame->supplyCount[cards[0]];
+        4:   85:	testGame->numBuys = 100;
+        4:   86:	testGame->coins = 300;
+       44:   87:	for (i=0; i< total_supply; i++) {
+branch  0 taken 91%
+branch  1 taken 9% (fallthrough)
+       40:   88:		buyCard(cards[0], testGame);
+call    0 returned 100%
+       40:   89:		buyCard(cards[1], testGame);
+call    0 returned 100%
+        -:   90:	}
+        -:   91:
+        4:   92:	printf("Testing 2 card pile depletions\n");
+call    0 returned 100%
+        4:   93:	printf("Expected: %s  Actual: ", notOver);
+call    0 returned 100%
+        4:   94:	if (assertTest(&testNumber, testGame))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+        4:   95:		successes++;
+        -:   96:	else 
+    #####:   97:		failures++;
+        -:   98:	
+        -:   99:
+        -:  100:	// Test 4 card depletions
+        4:  101:	memset(testGame, 0, sizeof(struct gameState));
+        4:  102:	initializeGame(2, cards, 1, testGame);
+call    0 returned 100%
+        4:  103:	total_supply = testGame->supplyCount[cards[0]];
+        -:  104:
+        4:  105:	testGame->numBuys = 100;
+        4:  106:	testGame->coins = 300;
+       44:  107:	for (i=0; i< total_supply; i++) {
+branch  0 taken 91%
+branch  1 taken 9% (fallthrough)
+       40:  108:		buyCard(cards[0], testGame);
+call    0 returned 100%
+       40:  109:		buyCard(cards[1], testGame);
+call    0 returned 100%
+       40:  110:		buyCard(cards[2], testGame);
+call    0 returned 100%
+       40:  111:		buyCard(cards[3], testGame);
+call    0 returned 100%
+        -:  112:	}
+        -:  113:
+        4:  114:	printf("Testing 4 card pile depletion \n");
+call    0 returned 100%
+        4:  115:	printf("Expected: %s  Actual: ", over);
+call    0 returned 100%
+        4:  116:	if (assertTest(&testNumber, testGame))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  117:		failures++;
+        -:  118:	else 
+        4:  119:		successes++;
+        -:  120:
+        -:  121:	// Tests for 3 players
+        4:  122:	printf("\n3-PLAYER TESTS\n\n");
+call    0 returned 100%
+        4:  123:	memset(testGame, 0, sizeof(struct gameState));
+        4:  124:	initializeGame(3, cards, 1, testGame);
+call    0 returned 100%
+        4:  125:	total_supply = testGame->supplyCount[cards[0]];
+        -:  126:
+        4:  127:	testGame->numBuys = 100;
+        4:  128:	testGame->coins = 300;
+       44:  129:	for (i=0; i< total_supply; i++) {
+branch  0 taken 91%
+branch  1 taken 9% (fallthrough)
+       40:  130:		buyCard(cards[0], testGame);
+call    0 returned 100%
+       40:  131:		buyCard(cards[1], testGame);
+call    0 returned 100%
+       40:  132:		buyCard(cards[2], testGame);
+call    0 returned 100%
+        -:  133:	}
+        -:  134:
+        4:  135:	printf("Testing 3 card piles depleted\n");
+call    0 returned 100%
+        4:  136:	printf("Expected: %s  Actual: ", over);
+call    0 returned 100%
+        4:  137:	if (assertTest(&testNumber, testGame))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  138:		failures++;
+        -:  139:	else 
+        4:  140:		successes++;
+        -:  141:
+        -:  142:	// Test province depletion
+        4:  143:	memset(testGame, 0, sizeof(struct gameState));
+        4:  144:	initializeGame(3, cards, 1, testGame);
+call    0 returned 100%
+        4:  145:	total_supply = testGame->supplyCount[province];
+        -:  146:
+        4:  147:	testGame->numBuys = 100;
+        4:  148:	testGame->coins = 300;
+       52:  149:	for (i=0; i< total_supply; i++) 
+branch  0 taken 92%
+branch  1 taken 8% (fallthrough)
+       48:  150:		buyCard(province, testGame);
+call    0 returned 100%
+        -:  151:
+        4:  152:	printf("Testing Province depletion \n");
+call    0 returned 100%
+        4:  153:	printf("Expected: %s  Actual: ", over);
+call    0 returned 100%
+        4:  154:	if (assertTest(&testNumber, testGame))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  155:		failures++;
+        -:  156:	else 
+        4:  157:		successes++;
+        -:  158:
+        -:  159:	// Test only 2 card supply depletions
+        4:  160:	memset(testGame, 0, sizeof(struct gameState));
+        4:  161:	initializeGame(3, cards, 1, testGame);
+call    0 returned 100%
+        4:  162:	total_supply = testGame->supplyCount[cards[0]];
+        4:  163:	testGame->numBuys = 100;
+        4:  164:	testGame->coins = 300;
+       44:  165:	for (i=0; i< total_supply; i++) {
+branch  0 taken 91%
+branch  1 taken 9% (fallthrough)
+       40:  166:		buyCard(cards[0], testGame);
+call    0 returned 100%
+       40:  167:		buyCard(cards[1], testGame);
+call    0 returned 100%
+        -:  168:	}
+        -:  169:
+        4:  170:	printf("Testing 2 card pile depletions\n");
+call    0 returned 100%
+        4:  171:	printf("Expected: %s  Actual: ", notOver);
+call    0 returned 100%
+        4:  172:	if (assertTest(&testNumber, testGame))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+        4:  173:		successes++;
+        -:  174:	else 
+    #####:  175:		failures++;
+        -:  176:	
+        -:  177:
+        -:  178:	// Test 4 card depletions
+        4:  179:	memset(testGame, 0, sizeof(struct gameState));
+        4:  180:	initializeGame(3, cards, 1, testGame);
+call    0 returned 100%
+        4:  181:	total_supply = testGame->supplyCount[cards[0]];
+        -:  182:
+        4:  183:	testGame->numBuys = 100;
+        4:  184:	testGame->coins = 300;
+       44:  185:	for (i=0; i< total_supply; i++) {
+branch  0 taken 91%
+branch  1 taken 9% (fallthrough)
+       40:  186:		buyCard(cards[0], testGame);
+call    0 returned 100%
+       40:  187:		buyCard(cards[1], testGame);
+call    0 returned 100%
+       40:  188:		buyCard(cards[2], testGame);
+call    0 returned 100%
+       40:  189:		buyCard(cards[3], testGame);
+call    0 returned 100%
+        -:  190:	}
+        -:  191:
+        4:  192:	printf("Testing 4 card pile depletion \n");
+call    0 returned 100%
+        4:  193:	printf("Expected: %s  Actual: ", over);
+call    0 returned 100%
+        4:  194:	if (assertTest(&testNumber, testGame))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  195:		failures++;
+        -:  196:	else 
+        4:  197:		successes++;
+        -:  198:
+        -:  199:	// Tests for 4 players
+        4:  200:	printf("\n4-PLAYER TESTS\n\n");
+call    0 returned 100%
+        4:  201:	memset(testGame, 0, sizeof(struct gameState));
+        4:  202:	initializeGame(4, cards, 1, testGame);
+call    0 returned 100%
+        4:  203:	total_supply = testGame->supplyCount[cards[0]];
+        -:  204:
+        4:  205:	testGame->numBuys = 100;
+        4:  206:	testGame->coins = 300;
+       44:  207:	for (i=0; i< total_supply; i++) {
+branch  0 taken 91%
+branch  1 taken 9% (fallthrough)
+       40:  208:		buyCard(cards[0], testGame);
+call    0 returned 100%
+       40:  209:		buyCard(cards[1], testGame);
+call    0 returned 100%
+       40:  210:		buyCard(cards[2], testGame);
+call    0 returned 100%
+        -:  211:	}
+        -:  212:
+        4:  213:	printf("Testing 3 card piles depleted\n");
+call    0 returned 100%
+        4:  214:	printf("Expected: %s  Actual: ", over);
+call    0 returned 100%
+        4:  215:	if (assertTest(&testNumber, testGame))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  216:		failures++;
+        -:  217:	else 
+        4:  218:		successes++;
+        -:  219:
+        -:  220:	// Test province depletion
+        4:  221:	memset(testGame, 0, sizeof(struct gameState));
+        4:  222:	initializeGame(4, cards, 1, testGame);
+call    0 returned 100%
+        4:  223:	total_supply = testGame->supplyCount[province];
+        -:  224:
+        4:  225:	testGame->numBuys = 100;
+        4:  226:	testGame->coins = 300;
+       52:  227:	for (i=0; i< total_supply; i++) 
+branch  0 taken 92%
+branch  1 taken 8% (fallthrough)
+       48:  228:		buyCard(province, testGame);
+call    0 returned 100%
+        -:  229:
+        4:  230:	printf("Testing Province depletion \n");
+call    0 returned 100%
+        4:  231:	printf("Expected: %s  Actual: ", over);
+call    0 returned 100%
+        4:  232:	if (assertTest(&testNumber, testGame))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  233:		failures++;
+        -:  234:	else 
+        4:  235:		successes++;
+        -:  236:
+        -:  237:	// Test only 2 card supply depletions
+        4:  238:	memset(testGame, 0, sizeof(struct gameState));
+        4:  239:	initializeGame(4, cards, 1, testGame);
+call    0 returned 100%
+        4:  240:	total_supply = testGame->supplyCount[cards[0]];
+        4:  241:	testGame->numBuys = 100;
+        4:  242:	testGame->coins = 300;
+       44:  243:	for (i=0; i< total_supply; i++) {
+branch  0 taken 91%
+branch  1 taken 9% (fallthrough)
+       40:  244:		buyCard(cards[0], testGame);
+call    0 returned 100%
+       40:  245:		buyCard(cards[1], testGame);
+call    0 returned 100%
+        -:  246:	}
+        -:  247:
+        4:  248:	printf("Testing 2 card pile depletions\n");
+call    0 returned 100%
+        4:  249:	printf("Expected: %s  Actual: ", notOver);
+call    0 returned 100%
+        4:  250:	if (assertTest(&testNumber, testGame))
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+        4:  251:		successes++;
+        -:  252:	else 
+    #####:  253:		failures++;
+        -:  254:	
+        -:  255:
+        -:  256:	// Test 4 card depletions
+        4:  257:	memset(testGame, 0, sizeof(struct gameState));
+        4:  258:	initializeGame(4, cards, 1, testGame);
+call    0 returned 100%
+        4:  259:	total_supply = testGame->supplyCount[cards[0]];
+        -:  260:
+        4:  261:	testGame->numBuys = 100;
+        4:  262:	testGame->coins = 300;
+       44:  263:	for (i=0; i< total_supply; i++) {
+branch  0 taken 91%
+branch  1 taken 9% (fallthrough)
+       40:  264:		buyCard(cards[0], testGame);
+call    0 returned 100%
+       40:  265:		buyCard(cards[1], testGame);
+call    0 returned 100%
+       40:  266:		buyCard(cards[2], testGame);
+call    0 returned 100%
+       40:  267:		buyCard(cards[3], testGame);
+call    0 returned 100%
+        -:  268:	}
+        -:  269:
+        4:  270:	printf("Testing 4 card pile depletion \n");
+call    0 returned 100%
+        4:  271:	printf("Expected: %s  Actual: ", over);
+call    0 returned 100%
+        4:  272:	if (assertTest(&testNumber, testGame))
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:  273:		failures++;
+        -:  274:	else 
+        4:  275:		successes++;
+        -:  276:
+        4:  277:	free(testGame);
+        -:  278:
+        -:  279:
+        -:  280:	/* Now Test that different aspects of game state are not altered by this function */
+        -:  281:
+        4:  282:	printf("\nTest Gamestate Consistency\n");
+call    0 returned 100%
+        -:  283:
+        4:  284:	memset(testGame, 0, sizeof(struct gameState));
+        4:  285:	initializeGame(4, cards, 1, testGame);
+call    0 returned 100%
+        -:  286:	// Now deplete three piles
+        4:  287:	testGame->supplyCount[cards[1]] = 0;
+        4:  288:	testGame->supplyCount[cards[2]] = 0;
+        4:  289:	testGame->supplyCount[cards[3]] = 0;
+        4:  290:	memcpy(&postGame, testGame, sizeof(struct gameState));
+        -:  291:
+        -:  292:	// After calling isGameOver, game state should remain the same
+     4004:  293:	for (i=0; i<1000; i++)
+branch  0 taken 99%
+branch  1 taken 1% (fallthrough)
+     4000:  294:		isGameOver(&postGame);
+call    0 returned 100%
+        -:  295:
+        4:  296:	int equal = memcmp(&postGame, testGame, sizeof(struct gameState));
+        -:  297:
+        4:  298:	testNumber++;
+        4:  299:	if ( equal == 0) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        4:  300:			printf("No state change after call with 3 depletions\n");
+call    0 returned 100%
+        4:  301:			successes++;
+        -:  302:	}
+        -:  303:	else {
+    #####:  304:		printf("Test %d Failed\n", testNumber);
+call    0 never executed
+    #####:  305:		failures++;
+        -:  306:	}
+        -:  307:
+        -:  308:
+        4:  309:	memset(testGame, 0, sizeof(struct gameState));
+        4:  310:	initializeGame(4, cards, 1, testGame);
+call    0 returned 100%
+        -:  311:	
+        -:  312:	// Now deplete two piles
+        4:  313:	testGame->supplyCount[cards[1]] = 0;
+        4:  314:	testGame->supplyCount[cards[2]] = 0;
+        4:  315:	memcpy(&postGame, testGame, sizeof(struct gameState));
+        -:  316:
+     4004:  317:	for (i=0; i<1000; i++)
+branch  0 taken 99%
+branch  1 taken 1% (fallthrough)
+     4000:  318:		isGameOver(&postGame);
+call    0 returned 100%
+        -:  319:
+        4:  320:	equal = memcmp(&postGame, testGame, sizeof(struct gameState));
+        -:  321:
+        4:  322:	testNumber++;
+        4:  323:	if ( equal == 0) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        4:  324:			printf("No state change after call with 2 depletions\n");
+call    0 returned 100%
+        4:  325:			successes++;
+        -:  326:	}
+        -:  327:	else {
+    #####:  328:		printf("Test %d Failed\n", testNumber);
+call    0 never executed
+    #####:  329:		failures++;
+        -:  330:	}
+        -:  331:	
+        4:  332:	memset(testGame, 0, sizeof(struct gameState));
+        4:  333:	initializeGame(4, cards, 1, testGame);
+call    0 returned 100%
+        -:  334:	// Now deplete provinces
+        4:  335:	testGame->supplyCount[province] = 0;
+        4:  336:	memcpy(&postGame, testGame, sizeof(struct gameState));
+        -:  337:	//printf("Comparison: %d\n", equal);
+        -:  338:
+      404:  339:	for (i=0; i<100; i++)
+branch  0 taken 99%
+branch  1 taken 1% (fallthrough)
+      400:  340:		isGameOver(&postGame);
+call    0 returned 100%
+        -:  341:
+        4:  342:	equal = memcmp(&postGame, testGame, sizeof(struct gameState));
+        -:  343:
+        -:  344:	// After calling isGameOver, game state should remain the same
+        4:  345:	testNumber++;
+        4:  346:	if ( equal == 0) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        4:  347:		printf("No state change after call with province depletions\n");
+call    0 returned 100%
+        4:  348:		successes++;
+        -:  349:	}
+        -:  350:	else {
+    #####:  351:		printf("Test %d Failed\n", testNumber);
+call    0 never executed
+    #####:  352:		failures++;
+        -:  353:	}
+        -:  354:
+        4:  355:	printf("\nTotal Tests: %d\nTests Passed: %d\nTests Failed: %d\n", testNumber, successes, failures);
+call    0 returned 100%
+        4:  356:}
+        -:  357:
+function main called 4 returned 100% blocks executed 100%
+        4:  358:int main(){
+        4:  359:	testGameOver();
+call    0 returned 100%
+        -:  360:
+        4:  361:	return 0;
+        -:  362:}
